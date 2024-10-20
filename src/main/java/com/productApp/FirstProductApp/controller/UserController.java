@@ -1,6 +1,8 @@
 package com.productApp.FirstProductApp.controller;
 
 
+import com.productApp.FirstProductApp.dto.ForgotPasswordRequest;
+import com.productApp.FirstProductApp.dto.ResetPasswordRequest;
 import com.productApp.FirstProductApp.dto.SignupRequest;
 import com.productApp.FirstProductApp.entity.User;
 import com.productApp.FirstProductApp.service.UserService;
@@ -60,6 +62,18 @@ public class UserController {
                                             @RequestParam String newPassword) {
         User updatedUser = userService.changePassword(id, oldPassword, newPassword);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    @PostMapping("/forgotPassword")
+    public String forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+        userService.forgotPassword(forgotPasswordRequest.getEmail());
+        return "Password reset link has been sent to your email.";
+    }
+
+    @PostMapping("/resetPassword")
+    public String resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        userService.resetPassword(resetPasswordRequest.getToken(), resetPasswordRequest.getNewPassword());
+        return "Password has been successfully reset.";
     }
 
 

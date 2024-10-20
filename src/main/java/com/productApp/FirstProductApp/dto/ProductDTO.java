@@ -18,6 +18,9 @@ public class ProductDTO {
     private Double markedPrice;
     private Double profit;
     private Double discountPercentage;
+    private String category;
+    private String brand;
+    private String gender;
 
     public ProductDTO(Product product) {
         this.id = product.getId();
@@ -28,6 +31,9 @@ public class ProductDTO {
         this.markedPrice = product.getMarkedPrice();
         this.profit = calculateProfit();
         this.discountPercentage = calculateDiscountPercentage();
+        this.category = product.getCategory();
+        this.brand = product.getBrand();
+        this.gender = product.getGender();
     }
 
     // Calculate profit

@@ -16,5 +16,9 @@ public class Product {
     private Double costPrice;
     private Double sellingPrice;
     private Double markedPrice;
+    private String category;
+    private String brand;
+    @Column(nullable = true)
+    private String gender;
 
 }

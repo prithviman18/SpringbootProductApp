@@ -3,12 +3,17 @@ package com.productApp.FirstProductApp.service;
 import com.productApp.FirstProductApp.dto.ProductDTO;
 import com.productApp.FirstProductApp.entity.Product;
 import com.productApp.FirstProductApp.repository.ProductRepository;
+import com.productApp.FirstProductApp.specification.ProductSpecification;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Data
@@ -29,7 +34,10 @@ public class ProductService {
                 savedProduct.getSellingPrice(),
                 savedProduct.getMarkedPrice(),
                 null,  // profit
-                null); // discount percentage
+                null,
+                savedProduct.getCategory(),
+                savedProduct.getBrand(),
+                savedProduct.getGender());
         productDTO.setProfitAndDiscount();  // Calculate profit and discount percentage
         return productDTO;
     }
@@ -47,6 +55,9 @@ public class ProductService {
             existingProduct.setCostPrice(productDetails.getCostPrice());
             existingProduct.setSellingPrice(productDetails.getSellingPrice());
             existingProduct.setMarkedPrice(productDetails.getMarkedPrice());
+            existingProduct.setCategory(productDetails.getCategory());
+            existingProduct.setBrand(productDetails.getBrand());
+            existingProduct.setGender(productDetails.getGender());
 
             // Save the updated product
             Product updatedProduct = productRepository.save(existingProduct);
@@ -58,8 +69,11 @@ public class ProductService {
                     updatedProduct.getCostPrice(),
                     updatedProduct.getSellingPrice(),
                     updatedProduct.getMarkedPrice(),
-                    null,  // profit
-                    null); // discount percentage
+                    null,
+                    null,
+                    updatedProduct.getCategory(),
+                    updatedProduct.getBrand(),
+                    updatedProduct.getGender());
             productDTO.setProfitAndDiscount();  // Calculate profit and discount percentage
             return productDTO;
         } else {
@@ -67,9 +81,34 @@ public class ProductService {
         }
     }
 
-    // Method to get all products
-    public List<ProductDTO> getAllProducts() {
-        List<Product> products = productRepository.findAll();
+    // Method to get all products with pagination
+    public List<ProductDTO> getAllProducts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> productPage = productRepository.findAll(pageable);
+        // Map the Page<Product> to a List<ProductDTO> and include profit and discount calculations
+        return productPage.stream()
+                .map(product -> {
+                    ProductDTO productDTO = new ProductDTO(product.getId(),
+                            product.getProductName(),
+                            product.getImageUrl(),
+                            product.getCostPrice(),
+                            product.getSellingPrice(),
+                            product.getMarkedPrice(),
+                            null,  // profit
+                            null,  // discount percentage
+                            product.getCategory(),
+                            product.getBrand(),
+                            product.getGender());
+                    productDTO.setProfitAndDiscount();  // Calculate profit and discount percentage
+                    return productDTO;
+                })
+                .collect(Collectors.toList());
+    }
+
+    // Method to search products by name (no pagination here)
+    public List<ProductDTO> getProductByName(String productName) {
+        List<Product> products = productRepository.findByProductNameContainingIgnoreCase(productName);
+
         return products.stream()
                 .map(product -> {
                     ProductDTO productDTO = new ProductDTO(product.getId(),
@@ -79,11 +118,14 @@ public class ProductService {
                             product.getSellingPrice(),
                             product.getMarkedPrice(),
                             null,  // profit
-                            null); // discount percentage
+                            null, // discount percentage
+                            product.getCategory(),
+                            product.getBrand(),
+                            product.getGender());
                     productDTO.setProfitAndDiscount();  // Calculate profit and discount percentage
                     return productDTO;
                 })
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // Method to get a product by its ID
@@ -99,7 +141,10 @@ public class ProductService {
                     product.getSellingPrice(),
                     product.getMarkedPrice(),
                     null,  // profit
-                    null); // discount percentage
+                    null, // discount percentage
+                    product.getCategory(),
+                    product.getBrand(),
+                    product.getGender());
             productDTO.setProfitAndDiscount();  // Calculate profit and discount percentage
             return productDTO;
         } else {
@@ -116,5 +161,33 @@ public class ProductService {
         } else {
             throw new RuntimeException("Product not found with id: " + id);
         }
+    }
+
+    // Method to get products based on filters with pagination
+    public List<ProductDTO> getProductsWithFilters(Map<String, Object> filters, int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+        // Pass the filters to ProductSpecification
+        ProductSpecification productSpecification = new ProductSpecification(filters);
+
+        Page<Product> productPage = productRepository.findAll(productSpecification,pageable);
+        // Pass the filters to ProductSpecification
+        return productPage.stream()
+                .map(product -> {
+                    ProductDTO productDTO = new ProductDTO(product.getId(),
+                            product.getProductName(),
+                            product.getImageUrl(),
+                            product.getCostPrice(),
+                            product.getSellingPrice(),
+                            product.getMarkedPrice(),
+                            null,  // profit
+                            null,
+                            product.getCategory(),
+                            product.getBrand(),
+                            product.getGender());
+                    productDTO.setProfitAndDiscount();
+                    return productDTO;
+                })
+                .collect(Collectors.toList());
+
     }
 }

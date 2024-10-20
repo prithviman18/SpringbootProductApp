@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Ignore .env file
+.env
+
+/src/main/resources/env.properties
+C:\Users\soory\Desktop\SpringBoot\FirstProductApp\src\main\resources\env.properties
+

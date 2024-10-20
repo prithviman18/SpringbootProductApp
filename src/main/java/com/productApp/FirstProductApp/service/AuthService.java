@@ -12,6 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Service
 public class AuthService {
@@ -26,6 +28,7 @@ public class AuthService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
 
     // Authenticate and generate tokens
     public LoginResponse authenticateUser(LoginRequest loginRequest) {
@@ -44,4 +47,6 @@ public class AuthService {
 
         return new LoginResponse(jwt, refreshToken);
     }
+
+
 }
