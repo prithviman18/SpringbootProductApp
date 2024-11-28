@@ -10,6 +10,7 @@ import com.productApp.FirstProductApp.repository.UserRepository;
 import lombok.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -23,7 +24,7 @@ public class UserService {
     private RoleRepository roleRepository;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private MailService mailService;
@@ -122,6 +123,43 @@ public class UserService {
 
         // Optionally, you can delete the token after the password is reset
         passwordResetTokenRepository.delete(resetToken);
+    }
+
+    //Register admin
+    public User registerAdmin(User user){
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        //Assigning the role of admin
+        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                .orElseThrow(() -> new RuntimeException("Admin role not found"));
+
+        Set<Role> roles = new HashSet<>();
+        roles.add(adminRole);
+        user.setRoles(roles);
+
+        //save the user to database
+        User savedUser = userRepository.save(user);
+        mailService.sendWelcomeEmail(savedUser.getEmail(), savedUser.getUsername());
+        return savedUser;
+    }
+
+    // Register a new Employee
+    public User registerEmployee(User user) {
+        // Encrypt the password
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // Assign default role as EMPLOYEE
+        Role employeeRole = roleRepository.findByName(ERole.ROLE_EMPLOYEE)
+                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
+        Set<Role> roles = new HashSet<>();
+        roles.add(employeeRole);
+        user.setRoles(roles);
+
+        // Save the user to the database
+        User savedUser = userRepository.save(user);
+        mailService.sendWelcomeEmail(savedUser.getEmail(), savedUser.getUsername());
+        return savedUser;
     }
 
 }

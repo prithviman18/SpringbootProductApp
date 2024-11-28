@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 // Enable scheduling for scheduled tasks like sending emails
 @EnableScheduling
+
 public class FirstProductAppApplication {
 
 	public static void main(String[] args) {

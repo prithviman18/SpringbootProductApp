@@ -1,9 +1,13 @@
 package com.productApp.FirstProductApp.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "products")
 public class Product {
@@ -20,5 +24,9 @@ public class Product {
     private String brand;
     @Column(nullable = true)
     private String gender;
+
+    public Product(Long id){
+        this.id = id;
+    }
 
 }
