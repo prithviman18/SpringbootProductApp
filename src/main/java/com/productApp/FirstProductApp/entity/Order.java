@@ -19,7 +19,7 @@ public class Order {
     @JoinColumn(name = "userId",nullable = false)
     private User user;
 
-    private LocalDateTime orderDateTime;
+    private LocalDateTime orderDateTime = LocalDateTime.now();
 
     private String status;
 

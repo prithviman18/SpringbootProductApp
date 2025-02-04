@@ -1,0 +1,62 @@
+#version: '3.8'
+#services:
+#  springboot-app:
+#    build:
+#      context: .
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - db
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/ecommerceApp  # Use "db" instead of "localhost"
+#      SPRING_DATASOURCE_USERNAME: root
+#      SPRING_DATASOURCE_PASSWORD: password
+#
+#  db:
+#    image: mysql:8.0
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root
+#      MYSQL_DATABASE: ecommerceApp
+#      MYSQL_USER: root
+#      MYSQL_PASSWORD: root
+#    ports:
+#        - "3306:3306"
+#    healthcheck:
+#        test: [ "CMD-SHELL", "mysqladmin ping -h localhost --silent" ]
+#        interval: 10s
+#        retries: 3
+
+
+version: '3.8'
+services:
+  springboot-app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ecommerceApp
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=test
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    networks:
+      - app-network
+
+  mysql-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+      MYSQL_DATABASE: ecommerceApp
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+
+networks:
+  app-network:
+
+volumes:
+  mysql-data:

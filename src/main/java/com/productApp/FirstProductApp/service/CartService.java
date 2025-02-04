@@ -65,4 +65,16 @@ public class CartService {
         cartRepository.deleteById(cartItemId);
     }
 
+    public void clearCartAfterCheckout(Long userId) {
+        // Fetch the user's cart
+        Cart cart = cartRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new RuntimeException("Cart not found for user ID: " + userId));
+
+        // Clear the cart items
+        cart.getCartItems().clear();
+
+        // Save the cart to persist changes
+        cartRepository.save(cart);
+    }
+
 }

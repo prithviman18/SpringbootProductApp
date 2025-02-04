@@ -48,7 +48,12 @@ public class OrderService {
         }
         order.setOrderItems(orderItems);
 
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+        // Clear the cart
+        cartService.clearCartAfterCheckout(userId);
+
+
+        return savedOrder;
 
     }
 
@@ -80,7 +85,7 @@ public class OrderService {
     public OrderDTO getOrderById(Long orderId) {
         Order order = orderRepository.findById(orderId).orElse(null);
         if (order == null) {
-            return null;
+            throw new EntityNotFoundException("The order is not present with order id:"+ orderId);
         }
 
         User user = order.getUser();
@@ -98,5 +103,7 @@ public class OrderService {
                 productDTOs
         );
     }
+
+
 
     }

@@ -47,17 +47,19 @@ public class OrderController {
 
    @GetMapping("/{orderId}")
     public ResponseEntity<ApiResponse<OrderDTO>> getOrderById(@PathVariable Long orderId){
-        try {
-            OrderDTO order = orderService.getOrderById(orderId);
-            if (order != null) {
-                return ResponseEntity.ok(new ApiResponse<>(true, order, null));
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>(false, null, new ErrorResponse(404, "Order not found")));
-            }
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>(false,null, new ErrorResponse(500,"Unable to find the order")));
-        }
+//        try {
+//            OrderDTO order = orderService.getOrderById(orderId);
+//            if (order != null) {
+//                return ResponseEntity.ok(new ApiResponse<>(true, order, null));
+//            } else {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                        .body(new ApiResponse<>(false, null, new ErrorResponse(404, "Order not found")));
+//            }
+//        } catch (Exception e){
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(new ApiResponse<>(false,null, new ErrorResponse(500,"Unable to find the order")));
+//        }
+       OrderDTO order = orderService.getOrderById(orderId);
+       return ResponseEntity.ok(new ApiResponse<>(true,order,null));
    }
 }

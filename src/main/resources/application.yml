@@ -3,10 +3,20 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/ecommerceApp
+    url: jdbc:mysql://mysql-db:3306/ecommerceApp
     username: root
     password: test
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+
   mail:
     host: smtp.gmail.com
     port: 587
@@ -16,24 +26,24 @@ spring:
           auth: true
           starttls:
             enable: true
-  config:
-    import: "classpath:env.properties"
-  jpa:
-    hibernate:
-      ddl-auto: update  # Automatically update the database schema
-#    show-sql: true  # Show SQL queries in the console
-#    properties:
-#      hibernate:
-#        format_sql: true  # Format SQL queries for readability
-#        use_sql_comments: true  # Add comments to SQL queries for context
+
+  mvc:
+    static-path-pattern: /static/**
 
   security:
     user:
       name: user
       password: password
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
 jwt:
   secret: "sM4Rj5w69It5YcxUo7g6h9F5zYwHkv8aT7JvMZmglH0="
-  expiration: 86400000  # 1 day in milliseconds
+  expiration: 86400000
 
 app:
   resetPassword:
